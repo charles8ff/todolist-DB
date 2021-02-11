@@ -30,14 +30,6 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
-# @app.route('/user', methods=['GET'])
-# def get_user_list():
-#     my_list = User.get_user_list()
-#     try:
-#         return jsonify(my_list.serialize()), 200
-#     except: 
-#         return name, 400
-
 @app.route('/user/<user_name>', methods=['GET'])
 def get_one_user(user_name):
     name = User.get_by_name(user_name)
@@ -55,6 +47,27 @@ def create_user():
         print(new_user)
         return jsonify(new_user.serialize()), 200
     return "", 400
+
+@app.route('/user/<user_name>/tasks', methods=['GET'])
+def get_user_tasks(user_name):
+    user = User.get_by_name(user_name).serialize()
+    tasks = Task.get_by_user(user.get('id'))
+    tasks = [task.serialize() for task in tasks]
+    return tasks, 200
+
+@app.route('/user/<user_name>/tasks', methods=['POST'])
+def add_user_new_task(user_name):
+    user = User.get_by_name(user_name)
+    new_tasks = request.get_json()
+    print(new_tasks)
+    for new_task in new_tasks:
+        task = Task(
+            label= new_task.get(label),
+            is_done= new_task.get(is_done),
+            user_id=user.get('id')
+        )
+        task.add()
+    return "Added tasks", 200
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':

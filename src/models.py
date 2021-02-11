@@ -15,19 +15,13 @@ class User(db.Model):
 
     def serialize(self):
         return {
+            "id": self.id,
             "name": self.name,
         }
 
     def add(self):
         db.session.add(self)
         db.session.commit()
-
-    # def get_user_list(self):
-    #     my_list = User.query.all()
-    #     print(my_list)
-    #     if my_list:
-    #         return my_list
-    #     return "No users in database"
 
     @classmethod
     def get_by_name(cls, user_name):
@@ -56,3 +50,11 @@ class Task(db.Model):
             "label": self.label,
             "is_done": self.is_done,
         }
+    def add(self):
+        db.session.add(self)
+        db.session.commit(self)
+
+    @classmethod
+    def get_by_user(cls, userid):
+        tasks= cls.query.filter_by(user_id= userid)
+        return tasks
