@@ -51,7 +51,7 @@ def create_user():
     body = request.get_json()
     if body.get("user_name", None):
         new_user = User(name = body.get("user_name"), is_active = True)
-        new_user.add_user()
+        new_user.add()
         print(new_user)
         return jsonify(new_user.serialize()), 200
     return "", 400
