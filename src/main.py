@@ -3,13 +3,14 @@ This module takes care of starting the API Server,
 Loading the DB and Adding the endpoints
 """
 import os
-from flask import Flask, request, jsonify, url_for
+from flask import Flask, jsonify, request, url_for
+from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_swagger import swagger
-from flask_cors import CORS
-from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User, Task
+from models import Task, User, db
+from utils import APIException, generate_sitemap
+
 #from models import Person
 
 app = Flask(__name__)
@@ -51,7 +52,7 @@ def create_user():
 @app.route('/user/<user_name>', methods=['DELETE'])
 def delete_one_user(user_name):
     User.delete_user(user_name)
-    return "user deleted coñññño",200
+    return "User Deleted Successfully",200
 
 
 @app.route('/user/<user_name>/tasks', methods=['GET'])
@@ -73,16 +74,21 @@ def add_user_new_task(user_name):
         )
         print(task)
         task.add()
-    return "Added tasks", 200
+    return "Added Tasks Successfully", 200
 
 @app.route('/user/<user_name>/tasks/<id>', methods=['PUT'])
 def update_task(user_name, id):
-    
-        body=request.get_json()
-        id=int(id)
-        #get de la tarea
-        Task.update(id, body['label'], body['is_done'])#use get
-        return "okay", 200 #get de 1 tarea
+    body=request.get_json()
+    id=int(id)
+    task = Task.get_single(id)
+    task.update(body['label'], body['is_done'])
+    return "Task Updated Successfully", 200 
+
+@app.route('/user/<user_name>/tasks/<id>', methods=['DELETE'])
+def delete_task(user_name, id):
+    id=int(id)
+    Task.delete(id)
+    return "Task Deleted Successfully", 200
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':

@@ -59,6 +59,12 @@ class Task(db.Model):
     def add(self):
         db.session.add(self)
         db.session.commit()
+    
+    def update(self, label, is_done):
+        print(self)
+        self.label = label
+        self.is_done = is_done
+        db.session.commit()
 
     @classmethod
     def get_by_user(cls, userid):
@@ -66,10 +72,12 @@ class Task(db.Model):
         return tasks
 
     @classmethod
-    def update(cls, id, label, is_done):
-        print("aaaaaaaaaaa")
-        task= cls.query.get(id)#this has to be passed by a get
-        print(task)
-        task.label = label
-        task.is_done = is_done
+    def get_single(cls, task_id):
+        task= cls.query.filter_by(id= task_id).first()
+        return task
+
+    @classmethod
+    def delete(cls, id):
+        target = cls.query.filter_by(id = id).first()
+        db.session.delete(target)
         db.session.commit()
