@@ -56,5 +56,5 @@ class Task(db.Model):
 
     @classmethod
     def get_by_user(cls, userid):
-        tasks= cls.query.filter_by(user_id= userid)
+        tasks= cls.query.filter_by(user_id= userid).all()
         return tasks

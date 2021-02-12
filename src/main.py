@@ -52,8 +52,8 @@ def create_user():
 def get_user_tasks(user_name):
     user = User.get_by_name(user_name).serialize()
     tasks = Task.get_by_user(user.get('id'))
-    tasks = [task.serialize() for task in tasks]
-    return tasks, 200
+    tasks_list = [task.serialize() for task in tasks]
+    return jsonify(tasks_list), 200
 
 @app.route('/user/<user_name>/tasks', methods=['POST'])
 def add_user_new_task(user_name):
