@@ -52,7 +52,7 @@ class Task(db.Model):
         }
     def add(self):
         db.session.add(self)
-        db.session.commit(self)
+        db.session.commit()
 
     @classmethod
     def get_by_user(cls, userid):

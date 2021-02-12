@@ -57,13 +57,13 @@ def get_user_tasks(user_name):
 
 @app.route('/user/<user_name>/tasks', methods=['POST'])
 def add_user_new_task(user_name):
-    user = User.get_by_name(user_name)
+    user = User.get_by_name(user_name).serialize()
     new_tasks = request.get_json()
-    print(new_tasks)
     for new_task in new_tasks:
+        print(new_task)
         task = Task(
-            label= new_task.get(label),
-            is_done= new_task.get(is_done),
+            label= new_task.get('label'),
+            is_done= new_task.get('is_done'),
             user_id=user.get('id')
         )
         task.add()
