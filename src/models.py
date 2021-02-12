@@ -8,7 +8,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), unique=True, nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
-    task = db.relationship("Task", lazy=True)
+    task = db.relationship("Task", cascade="all, delete", lazy=True)
 
     def __repr__(self):
         return f'User {self.name}'
@@ -33,6 +33,12 @@ class User(db.Model):
         db.session.add(self)
         db.session.commit()
         return self.serialize()
+    
+    @classmethod
+    def delete_user(cls, username):
+        target = cls.query.filter_by(name = username).first()
+        db.session.delete(target)
+        db.session.commit()
 
 class Task(db.Model):
     __tablename__ = 'tasks'
@@ -43,7 +49,7 @@ class Task(db.Model):
     user_id= db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __repr__(self):
-        return f'Task: {self.label} status: {self.is_done}'
+        return f'Task: {self.label} status: {self.is_done} ID:{self.id}'
 
     def serialize(self):
         return {
@@ -58,3 +64,12 @@ class Task(db.Model):
     def get_by_user(cls, userid):
         tasks= cls.query.filter_by(user_id= userid).all()
         return tasks
+
+    @classmethod
+    def update(cls, id, label, is_done):
+        print("aaaaaaaaaaa")
+        task= cls.query.get(id)#this has to be passed by a get
+        print(task)
+        task.label = label
+        task.is_done = is_done
+        db.session.commit()
